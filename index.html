@@ -18,18 +18,68 @@
         </header>
 
         <main>
+            <!-- user navigation tabs  -->
+            <nav>
+                <button class="tab-btn active" data-tab="register">Register</button>
+                <button class="tab-btn" data-tab="login">Login</button>
+                <button class="tab-btn" data-tab="catalog">Catalog</button>
+                <button class="tab-btn" data-tab="manage" style="display: none;" id="manage-tab">Manage Catalog</button>
+            </nav>
+            
+             <!-- user registration details section -->
+              <section class="user-content" id="registration">
+                <h2>User Registration</h2>
+                <form id="register-form">
+                    <input type="text" id="reg-username" placeholder="Username" required>
+                    <input type="text" id="user-id" placeholder="User ID" required>
+                    <input type="password" id="reg-password" placeholder="Password" required>
+                    <label><input type="checkbox" id="reg-admin"> Register as Admin</label>
+                    <button type="submit">Register</button
+                </form>
+                <p id="registration-message"></p>
+                <ul id="user-list"></ul>
+              </section>
 
+              <!-- user login section -->
+              <section class="user-content" id="login" style="display: none;">
+                    <h2>User Login</h2>
+                    <form id="login-form">
+                        <input type="text" id="login-username" placeholder="Username" required>
+                        <input type="password" id="login-password" placeholder="Password" required>
+                        <button type="submit">Login</button>
+                    </form>
+                    <p id="login-message"></p> 
+              </section>
 
+              <!-- Catalog Management Section -->
+               <section class="catalog-management" style="display: none;">
+                    <h2>Library Catalog</h2>
+                    <div id="book-catalog" style="display: none;">
+                        <input type="text" id="search-input" placeholder="Search books...">
+                        <div id="book-list"></div>
+                    </div>
+
+                    <form id="catalog-form">
+                        <input type="text" id="book-title" placeholder="Book Title" required>
+                        <input type="text" id="book-id" placeholder="Book ID" required>
+                        <button type="submit">Add Book</button>
+                      </form>
+
+                      <!-- Issue/Return Books Section -->
+                    <div id="manage-books">
+                        <h2>Manage Catalog(Admin only)</h2>
+                        <h3>Issue/Return Books</h3>
+                        <form id="add-book-form">
+                            <input type="text" id="book-title" placeholder="Book Title" required>
+                            <input type="text" id="book-author" placeholder="Author" required>
+                            <input type="number" id="book-quantity" placeholder="Quantity" min="1" required>
+                            <button type="submit">Add Book</button>
+                        </form>
+                        <div id="manage-book-list"></div>
+                    </div>  
+               </section>
         </main>
-
-
-
-
-
     </div>
-   
-
-
 
     <script src="main.js"></script>
 </body>
