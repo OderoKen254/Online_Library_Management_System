@@ -72,3 +72,12 @@ document.getElementById('login-form').addEventListener('submit', (e) => {
 });
 
 // Logging out
+document.getElementById('logout-btn').addEventListener('click', () => {
+    currentUser = null;
+    localStorage.removeItem('currentUser');
+    document.getElementById('logged-in-user').textContent = '';
+    document.getElementById('logout-btn').style.display = 'none';
+    document.getElementById('manage-tab').style.display = 'none';
+    document.querySelector('.tab-btn[data-tab="login"]').click();
+});
+
