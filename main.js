@@ -151,5 +151,13 @@ function displayManageBooks() {
 }
 
 // fnc to delete local storage books 
+function deleteBook(id) {
+    if (!currentUser || !currentUser.isAdmin) return;
+    books = books.filter(book => book.id !== id);
+    localStorage.setItem('books', JSON.stringify(books));
+    displayBooks();
+    displayManageBooks();
+}
+
 
 
