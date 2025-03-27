@@ -106,7 +106,7 @@ async function displayBooks() {
             div.innerHTML = `${title} by ${author}`;
             bookList.appendChild(div);
         });
-        
+
         //add locally managed books by admin
         books.forEach(book => {
             const div = document.createElement('div');
@@ -119,3 +119,37 @@ async function displayBooks() {
         bookList.innerHTML = '<p>Error loading books. Please try again.</p>';
     }
 }
+
+//Submit- adding books stored locally by Admin
+document.getElementById('add-books-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (!currentUser || !currentUser.isAdmin) return;
+    const title = document.getElementById('book-title').value;
+    const author = document.getElementById('book-author').value;
+    const quantity = parseInt(document.getElementById('book-quantity').value);
+    const id = books.length ? Math.max(...books.map(b => b.id)) + 1 : 1;
+
+    books.push({ id, title, author, quantity, });
+    localStorage.setItem('books', JSON.stringify(books));
+    displayBooks();
+    displayManageBooks();
+    e.target.reset();
+});
+
+//fnc Display managed books to admin only in local storage
+function displayManageBooks() {
+    const manageList = document.getElementById('manage-book-list');
+    manageList.innerHTML = " ";
+
+    books.forEach(book => {
+        const div = document.createElement('div');
+        div.className = 'book-item';
+        div.innerHTML = `${book.title} by ${book.author} (Qty: ${book.quantity}) 
+            <button onclick="deleteBook(${book.id})">Delete</button>`;
+        manageList.appendChild(div);
+    });
+}
+
+// fnc to delete local storage books 
+
+
