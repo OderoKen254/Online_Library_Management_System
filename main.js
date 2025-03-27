@@ -1,11 +1,11 @@
-// Element references
+// Create element references
 
 const Books_Library_API =
 let users = JSON.parse(localStorage.getItem('users')) || [];
 let books = JSON.parse(localStorage.getItem('books')) || [];
 const currentUser = null;
 
-// initialize the app (eventlistener for content load)
+// Event listener to initialize the app
 
 document.addEventListener('DOMContentLoaded', () => {
     if (localStorage.getItem("currentUser")) {
@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
     displayBooks();
 });
 
-//switching tabs (event listener for click on tabs)
+// Event listener for switching tabs (i.e. click on tabs)
 
 document.querySelectorAll('.tab-btn').forEach(button =>{
     button.addEventListener('click', () => {
@@ -32,7 +32,7 @@ document.querySelectorAll('.tab-btn').forEach(button =>{
     });
 });
 
-// user registration 
+// Event listener for user registration 
 document.getElementById('registration-form').addEventListener('submit', (e) => {
     e.preventDefault();
     const username = document.getElementById('reg-username').value;
@@ -49,7 +49,7 @@ document.getElementById('registration-form').addEventListener('submit', (e) => {
     e.target.reset();
 });
 
-//Submit user-login
+// Event listener for submitting user-login data form
 document.getElementById('login-form').addEventListener('submit', (e) => {
     e.preventDefault();
     const username = document.getElementById('login-username').value;
@@ -71,7 +71,7 @@ document.getElementById('login-form').addEventListener('submit', (e) => {
     e.target.reset();
 });
 
-// Logging out
+// Event listener for user logging out
 document.getElementById('logout-btn').addEventListener('click', () => {
     currentUser = null;
     localStorage.removeItem('currentUser');
@@ -81,13 +81,13 @@ document.getElementById('logout-btn').addEventListener('click', () => {
     document.querySelector('.tab-btn[data-tab="login"]').click();
 });
 
-// displaying books in catalog fetched from API
+// Async function for displaying books in catalog fetched from API source
 async function displayBooks() {
     const bookList = document.getElementById('book-list');
     bookList.innerHTML = <p>Loading books...</p>;
     const searchTerm = document.getElementById('search-input').value.trim();
 
-    //defaulting search to fiction books
+    // setting a default library search (i.e. defaulted the search to fiction books)
     try {
         let apiUrl = `${Books_Library_API}?q=${searchTerm || 'fiction'}`;
         const response = await fetch(apiUrl);
@@ -107,7 +107,7 @@ async function displayBooks() {
             bookList.appendChild(div);
         });
 
-        //add locally managed books by admin
+        // add locally managed books by admin
         books.forEach(book => {
             const div = document.createElement('div');
             div.className = 'book-item';
@@ -120,7 +120,7 @@ async function displayBooks() {
     }
 }
 
-//Submit- adding books stored locally by Admin
+// Event listener to submit local books- adding books stored locally by Admin
 document.getElementById('add-books-form').addEventListener('submit', (e) => {
     e.preventDefault();
     if (!currentUser || !currentUser.isAdmin) return;
@@ -136,7 +136,7 @@ document.getElementById('add-books-form').addEventListener('submit', (e) => {
     e.target.reset();
 });
 
-//fnc Display managed books to admin only in local storage
+// fnc to display managed books to admin panel only from books local storage
 function displayManageBooks() {
     const manageList = document.getElementById('manage-book-list');
     manageList.innerHTML = " ";
@@ -162,7 +162,7 @@ function deleteBook(id) {
 // search functionality input
 document.getElementById('search-input').addEventListener('input', displayBooks);
 
-//initializing tab
+// initializing tab
 document.querySelector('.tab-btn[data-tab = "register"]').click();
 
 
