@@ -1,6 +1,6 @@
 // Create element references
 
-const Books_Library_API = 'https://stephen-king-api.onrender.com/api/books';
+const Books_Library_API = 'https://stephen-king-api.onrender.com/api/books.json';
 
 let users = JSON.parse(localStorage.getItem('users')) || [];
 let books = JSON.parse(localStorage.getItem('books')) || [];
@@ -10,19 +10,21 @@ const currentUser = null;
 
 document.addEventListener('DOMContentLoaded', () => {
     if (localStorage.getItem("currentUser")) {
-        currentUser = JSON.parse(localStorage.getItem("currentUser"));
+        currentUser = JSON.parse(localStorage.getItem('currentUser'));
         document.getElementById('logged-in-user').textContent = `Welcome, ${currentUser.username}, login successful!`;
         document.getElementById('logout-btn').style.display = 'inline';
         document.getElementById('manage-tab').style.display = currentUser.isAdmin ? 'inline' : 'none';
         displayManageBooks();
     }
+    
     // to initialize catalog load
-    displayBooks();
+    // displayBooks();
+    document.querySelector('.tab-btn[data-tab="register"]').click(); 
 });
 
 // Event listener for switching tabs (i.e. click on tabs)
 
-document.querySelectorAll('.tab-btn').forEach(button =>{
+document.querySelectorAll('.tab-btn').forEach(button => {
     button.addEventListener('click', () => {
         document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
         button.classList.add('active');
@@ -37,20 +39,20 @@ document.querySelectorAll('.tab-btn').forEach(button =>{
 document.getElementById('registration-form').addEventListener('submit', (e) => {
     e.preventDefault();
     const username = document.getElementById('reg-username').value;
-    const userId = document.getElementById('user-id').value;
+    const Email = document.getElementById('user-email').value;
     const password = document.getElementById('password').value;
     const isAdmin = document.getElementById('reg-admin').checked;
-    
 
-    if (users.find(user => user.username === username)) {
-        document.getElementById('register-message').textContent = 'Username already exists!';
-
-        console.log(username);
+    if (!username || !Email || !password) {
+        document.getElementById('register-message').textContent = 'Please fill in all fields.';
         return;
     }
-    users.push({ username, userId, password, isAdmin });
-    console.log(users);
-
+    
+    if (users.find(user => user.username === username)) {
+        document.getElementById('register-message').textContent = 'Username already exists!';
+        return;
+    }
+    users.push({ username, Email, password, isAdmin });
     localStorage.setItem('users', JSON.stringify(users));
     document.getElementById('register-message').textContent = 'Your registration is successful! Please login.';
     console.log(username);
