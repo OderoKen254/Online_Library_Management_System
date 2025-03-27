@@ -85,7 +85,7 @@ document.getElementById('logout-btn').addEventListener('click', () => {
 async function displayBooks() {
     const bookList = document.getElementById('book-list');
     bookList.innerHTML = <p>Loading books...</p>;
-    const searchItem = document.getElementById('search-input').value.trim();
+    const searchTerm = document.getElementById('search-input').value.trim();
 
     //defaulting search to fiction books
     try {
@@ -107,9 +107,15 @@ async function displayBooks() {
             bookList.appendChild(div);
         });
         
-    
-
-        
+        //add locally managed books by admin
+        books.forEach(book => {
+            const div = document.createElement('div');
+            div.className = 'book-item';
+            div.innerHTML = `${book.title} by ${book.author} (Available: ${book.quantity})`;
+            bookList.appendChild(div);
+        });
+    }catch(error) {
+        console.error('Error fetching books:', error);
+        bookList.innerHTML = '<p>Error loading books. Please try again.</p>';
     }
-    
 }
