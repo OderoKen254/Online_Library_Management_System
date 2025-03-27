@@ -1,6 +1,6 @@
 // Element references
 
-const Books_API_URL =
+const Books_Library_API =
 let users = JSON.parse(localStorage.getItem('users')) || [];
 let books = JSON.parse(localStorage.getItem('books')) || [];
 const currentUser = null;
@@ -81,3 +81,35 @@ document.getElementById('logout-btn').addEventListener('click', () => {
     document.querySelector('.tab-btn[data-tab="login"]').click();
 });
 
+// displaying books in catalog fetched from API
+async function displayBooks() {
+    const bookList = document.getElementById('book-list');
+    bookList.innerHTML = <p>Loading books...</p>;
+    const searchItem = document.getElementById('search-input').value.trim();
+
+    //defaulting search to fiction books
+    try {
+        let apiUrl = `${Books_Library_API}?q=${searchTerm || 'fiction'}`;
+        const response = await fetch(apiUrl);
+        if (!response.ok) throw new ERROR('API request failed!');
+        const data = await response.json();
+
+        bookList.innerHTML = " "  //to clear loading msg
+
+        const booksToDisplay = data.docs.slice(0, 20)  //limit to first 20 books results
+
+        booksToDisplay.forEach(book => {
+            const title = book.title || 'Unknown Title';
+            const author = book.author_name ? book.author_name[0] : 'Unknown Author';
+            const div = document.createElement('div');
+            div.className = 'book-item';
+            div.innerHTML = `${title} by ${author}`;
+            bookList.appendChild(div);
+        });
+        
+    
+
+        
+    }
+    
+}
