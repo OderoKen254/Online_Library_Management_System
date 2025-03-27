@@ -65,6 +65,11 @@ document.getElementById('login-form').addEventListener('submit', (e) => {
     const username = document.getElementById('login-username').value;
     const password = document.getElementById('login-password').value;
 
+    if (!username || !Email || !password) {
+        document.getElementById('register-message').textContent = 'Please fill in all fields.';
+        return;
+    }
+
     const user = users.find(u => u.username === username && u.password === password);
 
     if (users) {
@@ -94,28 +99,32 @@ document.getElementById('logout-btn').addEventListener('click', () => {
 // Async function for displaying books in catalog fetched from API source
 async function displayBooks() {
     const bookList = document.getElementById('book-list');
-    bookList.innerHTML = '<p>Loading books...</p>'; // Fixed quotation marks
+    bookList.innerHTML = '<p>Loading books...</p>'; 
     const searchTerm = document.getElementById('search-input').value.trim();
 
     // Setting a default library search (i.e., defaulted the search to fiction books)
     try {
-        let apiUrl = `${Books_Library_API}?q=${searchTerm || 'fiction'}`;
+        let apiUrl = `${Books_Library_API}?q=${encodeURIComponent(searchTerm || 'fiction')}`;
         const response = await fetch(apiUrl);
-        if (!response.ok) throw new Error('API request failed!'); // Fixed Error instantiation
+        if (!response.ok) throw new Error('API request failed: ${response.status}');
         const data = await response.json();
 
         bookList.innerHTML = ""; // Clear loading message
 
         const booksToDisplay = data.docs.slice(0, 20); // Limit to first 20 book results
-
-        booksToDisplay.forEach((book) => {
-            const title = book.title || 'Unknown Title';
-            const author = book.author_name ? book.author_name[0] : 'Unknown Author';
-            const div = document.createElement('div');
-            div.className = 'book-item';
-            div.innerHTML = `${title} by ${author}`;
-            bookList.appendChild(div);
-        });
+        if (booksToDisplay.length === 0) {
+            bookList.innerHTML = '<p>No books found.</p>';
+        } else {
+            booksToDisplay.forEach((book) => {
+                const title = book.title || 'Unknown Title';
+                const author = book.author_name ? book.author_name[0] : 'Unknown Author';
+                const div = document.createElement('div');
+                div.className = 'book-item';
+                div.innerHTML = `${title} by ${author}`;
+                bookList.appendChild(div);
+            });
+            
+        }
 
         // Add locally managed books by admin
         books.forEach((book) => {
@@ -131,12 +140,22 @@ async function displayBooks() {
 }
 
 // Event listener to submit local books- adding books stored locally by Admin
-document.getElementById('add-books-form').addEventListener('submit', (e) => {
+document.getElementById('add-book-form').addEventListener('submit', (e) => {
     e.preventDefault();
-    if (!currentUser || !currentUser.isAdmin) return;
+    if (!currentUser || !currentUser.isAdmin) {
+        alert('Only admins can add books.');
+        return;
+    }
+
     const title = document.getElementById('book-title').value;
     const author = document.getElementById('book-author').value;
     const quantity = parseInt(document.getElementById('book-quantity').value);
+
+    if (!title || !author || isNaN(quantity)) {
+        alert('Please fill in all fields correctly.');
+        return;
+    }
+    
     const id = books.length ? Math.max(...books.map(b => b.id)) + 1 : 1;
 
     books.push({ id, title, author, quantity, });
