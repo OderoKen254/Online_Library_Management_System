@@ -50,3 +50,25 @@ document.getElementById('registration-form').addEventListener('submit', (e) => {
 });
 
 //Submit user-login
+document.getElementById('login-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const username = document.getElementById('login-username').value;
+    const password = document.getElementById('login-password').value;
+
+    const user = users.find(u => u.username === username && u.password === password);
+
+    if (users) {
+        currentUser = user;
+        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+        document.getElementById('logged-in-user').textContent = `Welcome, ${user.username}`;
+        document.getElementById('logout-btn').style.display = 'inline';
+        document.getElementById('login-message').textContent = 'You have successfully logged in!';
+        document.getElementById('manage-tab').style.display = user.isAdmin ? 'inline' : 'none';
+        displayBooks();
+    } else {
+        document.getElementById('login-message').textContent = 'Login failed! Check your credentials.';
+    }
+    e.target.reset();
+});
+
+// Logging out
