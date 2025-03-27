@@ -162,5 +162,9 @@ function deleteBook(id) {
 // search functionality input
 document.getElementById('search-input').addEventListener('input', displayBooks);
 
+//initializing tab
+document.querySelector('.tab-btn[data-tab = "register"]').click();
+
+
 
 
