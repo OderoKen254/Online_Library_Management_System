@@ -159,5 +159,8 @@ function deleteBook(id) {
     displayManageBooks();
 }
 
+// search functionality input
+document.getElementById('search-input').addEventListener('input', displayBooks);
+
 
 
