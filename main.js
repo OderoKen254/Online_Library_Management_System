@@ -9,6 +9,7 @@ const currentUser = null;
 // Event listener to initialize the app
 
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('DOM loaded');
     if (localStorage.getItem("currentUser")) {
         currentUser = JSON.parse(localStorage.getItem('currentUser'));
         document.getElementById('logged-in-user').textContent = `Welcome, ${currentUser.username}, login successful!`;
@@ -16,20 +17,22 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('manage-tab').style.display = currentUser.isAdmin ? 'inline' : 'none';
         displayManageBooks();
     }
-    
-    // to initialize catalog load
+    // to initialize tab to load users, catalog
+    document.querySelector('.tab-btn[data-tab="register"]').click();
+    displayUsers();
     // displayBooks();
-    document.querySelector('.tab-btn[data-tab="register"]').click(); 
 });
 
 // Event listener for switching tabs (i.e. click on tabs)
 
 document.querySelectorAll('.tab-btn').forEach(button => {
     button.addEventListener('click', () => {
+        console.log(`Switching to tab: ${button.dataset.tab}`);
         document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
         button.classList.add('active');
-        document.querySelectorAll('.tab-content').forEach(content => content.style.display = 'none');
-        document.getElementById(button.dataset.tab).style.display = 'block';
+        document.querySelectorAll('.user-content').forEach(content => content.style.display = 'none');
+        const targetTab = document.getElementById(button.dataset.tab);
+        if (targetTab) targetTab.style.display = 'block';
         if (button.dataset.tab === 'catalog') displayBooks();
         if (button.dataset.tab === 'manage') displayManageBooks();
     });
@@ -38,12 +41,12 @@ document.querySelectorAll('.tab-btn').forEach(button => {
 // Event listener for user registration 
 document.getElementById('registration-form').addEventListener('submit', (e) => {
     e.preventDefault();
-    const username = document.getElementById('reg-username').value;
-    const Email = document.getElementById('user-email').value;
-    const password = document.getElementById('password').value;
+    const username = document.getElementById('reg-username').value.trim();
+    const email = document.getElementById('user-email').value.trim();
+    const password = document.getElementById('password').value.trim();
     const isAdmin = document.getElementById('reg-admin').checked;
 
-    if (!username || !Email || !password) {
+    if (!username || !email || !password) {
         document.getElementById('register-message').textContent = 'Please fill in all fields.';
         return;
     }
@@ -52,21 +55,21 @@ document.getElementById('registration-form').addEventListener('submit', (e) => {
         document.getElementById('register-message').textContent = 'Username already exists!';
         return;
     }
-    users.push({ username, Email, password, isAdmin });
+    users.push({ username, email, password, isAdmin });
     localStorage.setItem('users', JSON.stringify(users));
     document.getElementById('register-message').textContent = 'Your registration is successful! Please login.';
-    console.log(username);
+    displayUsers();
     e.target.reset();
 });
 
 // Event listener for submitting user-login data form
 document.getElementById('login-form').addEventListener('submit', (e) => {
     e.preventDefault();
-    const username = document.getElementById('login-username').value;
-    const password = document.getElementById('login-password').value;
+    const username = document.getElementById('login-username').value.trim();
+    const password = document.getElementById('login-password').value.trim();
 
     if (!username || !Email || !password) {
-        document.getElementById('register-message').textContent = 'Please fill in all fields.';
+        document.getElementById('login-message').textContent = 'Please fill in all fields.';
         return;
     }
 
@@ -79,7 +82,7 @@ document.getElementById('login-form').addEventListener('submit', (e) => {
         document.getElementById('logout-btn').style.display = 'inline';
         document.getElementById('login-message').textContent = 'You have successfully logged in!';
         document.getElementById('manage-tab').style.display = user.isAdmin ? 'inline' : 'none';
-        displayBooks();
+        document.querySelector('.tab-btn[data-tab="catalog"]').click();
     } else {
         document.getElementById('login-message').textContent = 'Login failed! Check your credentials.';
     }
@@ -88,6 +91,7 @@ document.getElementById('login-form').addEventListener('submit', (e) => {
 
 // Event listener for user logging out
 document.getElementById('logout-btn').addEventListener('click', () => {
+    console.log('Logging out');
     currentUser = null;
     localStorage.removeItem('currentUser');
     document.getElementById('logged-in-user').textContent = '';
@@ -95,6 +99,16 @@ document.getElementById('logout-btn').addEventListener('click', () => {
     document.getElementById('manage-tab').style.display = 'none';
     document.querySelector('.tab-btn[data-tab="login"]').click();
 });
+
+// func to display registered users
+function displayUsers() {
+    const userList = document.getElementById('user-list');
+    userList.innerHTML = '';
+    users.forEach(user => {
+        const li = document.createElement('li');
+        li.textContent = `${user.username} (${user.isAdmin ? 'Admin' : 'User'})`;
+        userList.appendChild(li);
+    });
 
 // Async function for displaying books in catalog fetched from API source
 async function displayBooks() {
@@ -196,7 +210,7 @@ function deleteBook(id) {
 document.getElementById('search-input').addEventListener('input', displayBooks);
 
 // initializing tab
-document.querySelector('.tab-btn[data-tab = "register"]').click();
+document.querySelector('.tab-btn[data-tab = "registration"]').click();
 
 
 

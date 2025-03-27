@@ -15,7 +15,7 @@
             </div>
             <div id="user-info">
                 <span id="logged-in-user"></span>
-                <button id="logout-btn" class="btn" style="display: none">Logout</button>
+                <button id="logout-btn" class="btn" style="display: none;">Logout</button>
             </div>
         </header>
 
@@ -33,13 +33,12 @@
                 <h2>User Registration</h2>
                 <form id="registration-form">
                     <input type="text" id="reg-username" placeholder="Username" required>
-                    <input type="Email" id="user-email" placeholder="Email" required>
+                    <input type="email" id="user-email" placeholder="Email" required>
                     <input type="password" id="password" placeholder="Password" required>
-                    <label><input type="checkbox" id="reg-admin"> Register as Admin</label>
+                    <label><input type="checkbox" id="reg-admin"> Sign Up as Admin</label>
                     <button type="submit" class="btn">Register</button>
                 </form>
                 <p id="register-message"></p>
-                <ul id="user-list"></ul>
               </section>
 
               <!-- user login section -->
@@ -53,32 +52,23 @@
                     <p id="login-message"></p> 
               </section>
 
-              <!-- Catalog Management Section -->
-               <section class="catalog-management" style="display: none;">
+              <!-- Catalog Section -->
+               <section class="user-content" id="catalog" style="display: none;">
                     <h2>Library Catalog</h2>
-                    <div id="book-catalog" style="display: none;">
-                        <input type="text" id="search-input" placeholder="Search books...">
-                        <div id="book-list"></div>
-                    </div>
+                    <input type="text" id="search-input" placeholder="Search books by title or genre...">
+                    <div id="book-list"></div>
+               </section>
 
-                    <form id="catalog-form">
+                <!-- Manage catalog: Issue/Return Books Section -->
+                <section class="user-content" id="manage" style="display: none;">
+                    <h2>Manage Catalog (Admin Only)</h2>
+                    <form id="add-book-form">
                         <input type="text" id="book-title" placeholder="Book Title" required>
-                        <input type="text" id="book-id" placeholder="Book ID" required>
-                        <button type="submit">Add Book</button>
-                      </form>
-
-                      <!-- Issue/Return Books Section -->
-                    <div id="manage-books">
-                        <h2>Manage Catalog(Admin only)</h2>
-                        <h3>Issue/Return Books</h3>
-                        <form id="add-book-form">
-                            <input type="text" id="book-title" placeholder="Book Title" required>
-                            <input type="text" id="book-author" placeholder="Author" required>
-                            <input type="number" id="book-quantity" placeholder="Quantity" min="1" required>
-                            <button type="submit">Add Book</button>
-                        </form>
-                        <div id="manage-book-list"></div>
-                    </div>  
+                        <input type="text" id="book-author" placeholder="Author" required>
+                        <input type="number" id="book-quantity" placeholder="Quantity" min="1" required>
+                        <button type="submit" class="btn">Add Book</button>
+                    </form>
+                    <div id="manage-book-list"></div>
                </section>
         </main>
     </div>
