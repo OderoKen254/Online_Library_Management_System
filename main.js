@@ -1,6 +1,7 @@
 // Create element references
 
-const Books_Library_API =
+const Books_Library_API = 'https://stephen-king-api.onrender.com/api/books';
+
 let users = JSON.parse(localStorage.getItem('users')) || [];
 let books = JSON.parse(localStorage.getItem('books')) || [];
 const currentUser = null;
@@ -36,16 +37,23 @@ document.querySelectorAll('.tab-btn').forEach(button =>{
 document.getElementById('registration-form').addEventListener('submit', (e) => {
     e.preventDefault();
     const username = document.getElementById('reg-username').value;
+    const userId = document.getElementById('user-id').value;
     const password = document.getElementById('password').value;
     const isAdmin = document.getElementById('reg-admin').checked;
+    
 
     if (users.find(user => user.username === username)) {
         document.getElementById('register-message').textContent = 'Username already exists!';
+
+        console.log(username);
         return;
     }
-    users.push({ username, password, isAdmin });
+    users.push({ username, userId, password, isAdmin });
+    console.log(users);
+
     localStorage.setItem('users', JSON.stringify(users));
-    document.getElementById('register-message') = 'Your registration is successful! Please login.';
+    document.getElementById('register-message').textContent = 'Your registration is successful! Please login.';
+    console.log(username);
     e.target.reset();
 });
 
@@ -84,21 +92,21 @@ document.getElementById('logout-btn').addEventListener('click', () => {
 // Async function for displaying books in catalog fetched from API source
 async function displayBooks() {
     const bookList = document.getElementById('book-list');
-    bookList.innerHTML = <p>Loading books...</p>;
+    bookList.innerHTML = '<p>Loading books...</p>'; // Fixed quotation marks
     const searchTerm = document.getElementById('search-input').value.trim();
 
-    // setting a default library search (i.e. defaulted the search to fiction books)
+    // Setting a default library search (i.e., defaulted the search to fiction books)
     try {
         let apiUrl = `${Books_Library_API}?q=${searchTerm || 'fiction'}`;
         const response = await fetch(apiUrl);
-        if (!response.ok) throw new ERROR('API request failed!');
+        if (!response.ok) throw new Error('API request failed!'); // Fixed Error instantiation
         const data = await response.json();
 
-        bookList.innerHTML = " "  //to clear loading msg
+        bookList.innerHTML = ""; // Clear loading message
 
-        const booksToDisplay = data.docs.slice(0, 20)  //limit to first 20 books results
+        const booksToDisplay = data.docs.slice(0, 20); // Limit to first 20 book results
 
-        booksToDisplay.forEach(book => {
+        booksToDisplay.forEach((book) => {
             const title = book.title || 'Unknown Title';
             const author = book.author_name ? book.author_name[0] : 'Unknown Author';
             const div = document.createElement('div');
@@ -107,16 +115,16 @@ async function displayBooks() {
             bookList.appendChild(div);
         });
 
-        // add locally managed books by admin
-        books.forEach(book => {
+        // Add locally managed books by admin
+        books.forEach((book) => {
             const div = document.createElement('div');
             div.className = 'book-item';
             div.innerHTML = `${book.title} by ${book.author} (Available: ${book.quantity})`;
             bookList.appendChild(div);
         });
-    }catch(error) {
+    } catch (error) {
         console.error('Error fetching books:', error);
-        bookList.innerHTML = '<p>Error loading books. Please try again.</p>';
+        bookList.innerHTML = '<p>Error loading books. Please try again.</p>'; // Fixed quotation marks
     }
 }
 

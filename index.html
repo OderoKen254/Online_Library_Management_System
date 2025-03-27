@@ -13,10 +13,9 @@
             <div class="title">
                 <h1>Elite Modern Digital Library</h1>
             </div>
-           
             <div id="user-info">
                 <span id="logged-in-user"></span>
-                <button id="logout-btn" style="display: none">Logout</button>
+                <button id="logout-btn" class="btn" style="display: none">Logout</button>
             </div>
         </header>
 
@@ -32,14 +31,14 @@
              <!-- user registration details section -->
               <section class="user-content" id="registration">
                 <h2>User Registration</h2>
-                <form id="register-form">
+                <form id="registration-form">
                     <input type="text" id="reg-username" placeholder="Username" required>
                     <input type="text" id="user-id" placeholder="User ID" required>
-                    <input type="password" id="reg-password" placeholder="Password" required>
+                    <input type="password" id="password" placeholder="Password" required>
                     <label><input type="checkbox" id="reg-admin"> Register as Admin</label>
-                    <button type="submit">Register</button
+                    <button type="submit">Register</button>
                 </form>
-                <p id="registration-message"></p>
+                <p id="register-message"></p>
                 <ul id="user-list"></ul>
               </section>
 
