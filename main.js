@@ -155,7 +155,7 @@ document.getElementById('add-book-form').addEventListener('submit', (e) => {
         alert('Please fill in all fields correctly.');
         return;
     }
-    
+
     const id = books.length ? Math.max(...books.map(b => b.id)) + 1 : 1;
 
     books.push({ id, title, author, quantity, });
@@ -170,13 +170,17 @@ function displayManageBooks() {
     const manageList = document.getElementById('manage-book-list');
     manageList.innerHTML = " ";
 
-    books.forEach(book => {
-        const div = document.createElement('div');
-        div.className = 'book-item';
-        div.innerHTML = `${book.title} by ${book.author} (Qty: ${book.quantity}) 
-            <button onclick="deleteBook(${book.id})">Delete</button>`;
-        manageList.appendChild(div);
-    });
+    if (books.length === 0) {
+        manageList.innerHTML = '<p>No local books added yet.</p>';
+    } else {
+        books.forEach(book => {
+            const div = document.createElement('div');
+            div.className = 'book-item';
+            div.innerHTML = `${book.title} by ${book.author} (Qty: ${book.quantity}) 
+                <button onclick="deleteBook(${book.id})">Delete</button>`;
+            manageList.appendChild(div);
+        });
+    }
 }
 
 // fnc to delete local storage books 
