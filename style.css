@@ -4,6 +4,11 @@
     box-sizing: border-box;
     font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
+body {
+    background: url('https://m.media-amazon.com/images/I/81+njO0FNmL._AC_SL1500_.jpg') no-repeat center center fixed;
+    background-size: cover;
+  }
+  
 
 body {
     background-color: #f4f4f4;
@@ -12,12 +17,13 @@ body {
 }
 
 .Library-container {
-    max-width: 1200px;
-    margin: 20px auto;
+    max-width: 800px;
+    width: 90%;
+    margin: 45px auto;
     padding: 20px;
-    background: #fff;
+    background:rgba(127, 255, 212, 0.719);
     border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 header {
     display: flex;
