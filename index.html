@@ -9,15 +9,15 @@
 <body>
     <div class="Library-container">
      <!-- header section -->
-        <header>
-            <div class="title">
-                <h1>Elite Modern Digital Library</h1>
-            </div>
-            <div id="user-info">
-                <span id="logged-in-user"></span>
-                <button id="logout-btn" class="btn" style="display: none;">Logout</button>
-            </div>
-        </header>
+     <header>
+        <div class="title">
+            <h1>Elite Modern Digital Library</h1>
+        </div>
+        <div id="user-info">
+            <span id="logged-in-user"></span>
+            <button id="logout-btn" class="btn" style="display: none;">Logout</button>
+        </div>
+    </header>
 
         <main>
             <!-- user navigation tabs  -->
@@ -29,47 +29,49 @@
             </nav>
             
              <!-- user registration details section -->
-              <section class="user-content" id="registration">
+             <section class="user-content" id="register">
                 <h2>User Registration</h2>
                 <form id="registration-form">
                     <input type="text" id="reg-username" placeholder="Username" required>
                     <input type="email" id="user-email" placeholder="Email" required>
                     <input type="password" id="password" placeholder="Password" required>
-                    <label><input type="checkbox" id="reg-admin"> Sign Up as Admin</label>
+                    <label><input type="checkbox" id="reg-admin"> Register as Admin</label>
                     <button type="submit" class="btn">Register</button>
                 </form>
                 <p id="register-message"></p>
-              </section>
+                <ul id="user-list"></ul>              
+            </section>
 
               <!-- user login section -->
-              <section class="user-content" id="login" style="display: none;">
-                    <h2>User Login</h2>
-                    <form id="login-form">
-                        <input type="text" id="login-username" placeholder="Username" required>
-                        <input type="password" id="login-password" placeholder="Password" required>
-                        <button type="submit" class="btn">Login</button>
-                    </form>
-                    <p id="login-message"></p> 
-              </section>
+            <section class="user-content" id="login" style="display: none;">
+                <h2>User Login</h2>
+                <form id="login-form">
+                    <input type="text" id="login-username" placeholder="Username" required>
+                    <input type="password" id="login-password" placeholder="Password" required>
+                    <button type="submit" class="btn">Login</button>
+                </form>
+                <p id="login-message"></p>
+            </section>
 
               <!-- Catalog Section -->
-               <section class="user-content" id="catalog" style="display: none;">
-                    <h2>Library Catalog</h2>
-                    <input type="text" id="search-input" placeholder="Search books by title or genre...">
-                    <div id="book-list"></div>
-               </section>
+            <section class="user-content" id="catalog" style="display: none;">
+                <h2>Library Catalog</h2>
+                <input type="text" id="search-input" placeholder="Search books by title...">
+                <div id="book-list"></div>
+            </section>
 
                 <!-- Manage catalog: Issue/Return Books Section -->
-                <section class="user-content" id="manage" style="display: none;">
-                    <h2>Manage Catalog (Admin Only)</h2>
-                    <form id="add-book-form">
-                        <input type="text" id="book-title" placeholder="Book Title" required>
-                        <input type="text" id="book-author" placeholder="Author" required>
-                        <input type="number" id="book-quantity" placeholder="Quantity" min="1" required>
-                        <button type="submit" class="btn">Add Book</button>
-                    </form>
-                    <div id="manage-book-list"></div>
-               </section>
+                
+            <section class="user-content" id="manage" style="display: none;">
+                <h2>Manage Catalog (Admin Only)</h2>
+                <form id="add-book-form">
+                    <input type="text" id="book-title" placeholder="Book Title" required>
+                    <input type="text" id="book-author" placeholder="Author" required>
+                    <input type="number" id="book-quantity" placeholder="Quantity" min="1" required>
+                    <button type="submit" class="btn">Add Book</button>
+                </form>
+                <div id="manage-book-list"></div>
+            </section>
         </main>
     </div>
 

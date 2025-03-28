@@ -5,22 +5,9 @@
     font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-    padding: 1.5rem 0;
-
-}
-
-main {
-    padding: 1.5rem;
-  }
-  
 body {
     background-color: #f4f4f4;
-    color: #802b2b;
+    color: #333;
     line-height: 1.6;
 }
 
@@ -28,25 +15,30 @@ body {
     max-width: 1200px;
     margin: 20px auto;
     padding: 20px;
-    background: azure;
+    background: #fff;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
-
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
 h1 {
     color: #2c3e50;
+    font-size: 2em;
 }
 
 #user-info {
     font-size: 1.1em;
 }
-
 nav {
-    margin-bottom: 25px;
+    margin-bottom: 20px;
 }
 
 .tab-btn {
-    padding: 5px 20px;
+    padding: 10px 20px;
     margin-right: 5px;
     background: #3498db;
     color: white;
@@ -55,13 +47,12 @@ nav {
     cursor: pointer;
     transition: background 0.3s;
 }
-
 .tab-btn:hover {
     background: #2980b9;
 }
 
 .tab-btn.active {
-    background: #a09e18b0;
+    background: #2c3e50;
 }
 
 .user-content {
@@ -69,10 +60,8 @@ nav {
     border-radius: 5px;
     background: #f8f9fa;
 }
-
 h2 {
-    color: #802b2b;
-    ;
+    color: #34495e;
     margin-bottom: 15px;
 }
 
@@ -82,30 +71,28 @@ form {
     gap: 10px;
     max-width: 300px;
 }
-
-input, button {
-    flex: 1 1 calc(50% - 1rem);
+input {
     padding: 10px;
     border-radius: 5px;
     border: 1px solid #ddd;
 }
 
-button {
+.btn {
+    padding: 10px;
     background: #e74c3c;
     color: white;
     border: none;
+    border-radius: 5px;
     cursor: pointer;
     transition: background 0.3s;
 }
-
-button:hover {
+.btn:hover {
     background: #c0392b;
 }
 
 #book-list, #manage-book-list {
     margin-top: 20px;
 }
-
 .book-item {
     padding: 10px;
     margin-bottom: 10px;
@@ -116,22 +103,28 @@ button:hover {
     justify-content: space-between;
     align-items: center;
 }
-
 .book-item button {
     padding: 5px 10px;
     font-size: 0.9em;
+    background: #e74c3c;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
+.book-item button:hover {
+    background: #c0392b;
 }
 
-ul {
-    list-style: none;
-    padding: 0;
-  }  
+p {
+    color: #555;
+}
 
-ul li {
-    padding: 0.5rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    margin: 0.5rem 0;
-    background: #f9f9f9;
-  }
+#user-list {
+    list-style: none;
+    margin-top: 10px;
+}
+#user-list li {
+    padding: 5px 0;
+}
   
