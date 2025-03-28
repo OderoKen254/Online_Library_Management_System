@@ -4,7 +4,7 @@ const Books_Library_API = 'https://openlibrary.org/search.json';
 
 let users = JSON.parse(localStorage.getItem('users')) || [];
 let books = JSON.parse(localStorage.getItem('books')) || [];
-let currentUser = null; // we use let because it will be reassigned later to other users
+let currentUser = null;
 
 //Debounce function to limit API calls
 function debounce(func, wait) {
@@ -23,12 +23,11 @@ function isValidEmail(email) {
 // Password strength validation function
 function isStrongPassword(password) {
     const minLength = 8;
-    const maxLength =12;
     const hasUpperCase = /[A-Z]/.test(password);
     const hasLowerCase = /[a-z]/.test(password);
     const hasNumbers = /\d/.test(password);
     const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(password);
-    return password.length >= minLength && maxLength && hasUpperCase && hasLowerCase && 
+    return password.length >= minLength && hasUpperCase && hasLowerCase && 
            hasNumbers && hasSpecial;
 }
 
@@ -45,6 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     displayUsers();
 });
+
 
 // Event listener for switching tabs (i.e. click on tabs)
 document.querySelectorAll('.tab-btn').forEach(button => {
@@ -85,7 +85,7 @@ if (regForm) {
 
         if (!isStrongPassword(password)) {
             document.getElementById('register-message').textContent = 
-                'Password must have 8-12 characters of uppercase, lowercase, numbers, and special characters.';
+                'Password must include at least 8 characters with uppercase, lowercase, numbers, and special characters.';
             return;
         }
 
@@ -105,7 +105,7 @@ if (regForm) {
         displayUsers();
         e.target.reset();
 
-    // Switch to login tab after registration
+// Immediately switch to login tab
         setTimeout(() => {
             document.querySelector('.tab-btn[data-tab="login"]').click();
             document.getElementById('register-message').textContent = ''; // Clear message
@@ -113,8 +113,10 @@ if (regForm) {
     });
 }
 
+
 // Event listener for submitting user-login data form
 const loginForm = document.getElementById('login-form');
+
 if (loginForm) {
     loginForm.addEventListener('submit', (e) => {
         e.preventDefault();
@@ -158,7 +160,7 @@ if (logoutBtn) {
     });
 }
 
-// func helper to update UI based on current user status
+// func helper to update UI
 function updateUserInterface() {
     const userInfo = document.getElementById('logged-in-user');
     const logoutBtn = document.getElementById('logout-btn');
@@ -169,6 +171,7 @@ function updateUserInterface() {
         manageTab.style.display = currentUser.isAdmin ? 'inline' : 'none';
     }
 }
+
 
 // func to display registered users
 function displayUsers() {
@@ -183,14 +186,19 @@ function displayUsers() {
     }
 }
 
+
 // Async function for displaying books in catalog fetched from API source
 async function displayBooks() {
     const bookList = document.getElementById('book-list');
-    if (!bookList) return;
-    bookList.innerHTML = '<p>Loading available books...</p>';
+    const borrowedBooksList = document.getElementById('borrowed-books');
+    if (!bookList || !borrowedBooksList) return;
+
+    bookList.innerHTML = '<p>Loading books...</p>';
+    borrowedBooksList.innerHTML = '';
+
     const searchTerm = document.getElementById('search-input')?.value.trim() || 'fiction';
-    
     // Setting a default library search (i.e., defaulted the search to fiction books)
+
     try {
         const apiUrl = `${Books_Library_API}?q=${encodeURIComponent(searchTerm)}`;
         const response = await fetch(apiUrl);
@@ -199,8 +207,8 @@ async function displayBooks() {
 
         bookList.innerHTML = ''; // Clear loading message
 
-        const booksToDisplay = data.docs.slice(0, 15); // Limit to first 15 API results
-        if (booksToDisplay.length === 0) {
+        const booksToDisplay = data.docs.slice(0, 10); // Limit to first 10 API results
+        if (booksToDisplay.length === 0 && books.length === 0) {
             bookList.innerHTML = '<p>No available books found.</p>';
         } else {
             booksToDisplay.forEach(book => {
@@ -215,20 +223,38 @@ async function displayBooks() {
 
         // Add locally managed books by admin
         books.forEach(book => {
-            const div = document.createElement('div');
-            div.className = 'book-item';
-            // Add a "Borrow" button if the book is available and a user is logged in.
-            const borrowButton = currentUser && book.quantity > 0 
-                ? `<button onclick="borrowBook(${book.id})">Borrow</button>` 
-                : '';
-            div.innerHTML = `${book.title} by ${book.author} (Available: ${book.quantity}) ${borrowButton}`;
-            bookList.appendChild(div);
+            const isBorrowed = currentUser && currentUser.borrowedBooks && currentUser.borrowedBooks.includes(book.id);
+            if (!isBorrowed) {
+                const div = document.createElement('div');
+                div.className = 'book-item';
+                const borrowButton = currentUser && book.quantity > 0 
+                    ? `<button class="borrow-btn" onclick="borrowBook(${book.id})">Borrow</button>`
+                    : '';
+                div.innerHTML = `${book.title} by ${book.author} (Available: ${book.quantity}) ${borrowButton}`;
+                bookList.appendChild(div);
+            }
         });
+
+        // Display current user's borrowed books with Return button
+        if (currentUser && currentUser.borrowedBooks && currentUser.borrowedBooks.length > 0) {
+            currentUser.borrowedBooks.forEach(bookId => {
+                const book = books.find(b => b.id === bookId);
+                if (book) {
+                    const div = document.createElement('div');
+                    div.className = 'book-item';
+                    div.innerHTML = `${book.title} by ${book.author} 
+                        <button onclick="returnBook(${book.id}, '${currentUser.username}')">Return</button>`;
+                    borrowedBooksList.appendChild(div);
+                }
+            });
+        } else {
+            borrowedBooksList.innerHTML = '<p>No books borrowed yet.</p>';
+        }
     } catch (error) {
         bookList.innerHTML = `<p>Error loading books. Please try again.</p>`;
-        console.error('Error fetching books:', error);
     }
-}   
+}
+    
 
 // Event listener to submit local books- adding books stored locally by Admin
 const addBookForm = document.getElementById('add-book-form');
@@ -273,13 +299,8 @@ function displayManageBooks() {
         books.forEach(book => {
             const div = document.createElement('div');
             div.className = 'book-item';
-            // Create a delete button with an event listener.
-            const deleteButton = document.createElement('button');
-            deleteButton.textContent = 'Delete';
-            deleteButton.addEventListener('click', () => deleteBook(book.id));
-
-            div.innerHTML = `${book.title} by ${book.author} (Qty: ${book.quantity}) `;
-            div.appendChild(deleteButton);
+            div.innerHTML = `${book.title} by ${book.author} (Qty: ${book.quantity}) 
+                <button onclick="deleteBook(${book.id})">Delete</button>`;
             manageList.appendChild(div);
         });
 
@@ -287,32 +308,33 @@ function displayManageBooks() {
         if (currentUser && currentUser.isAdmin) {
             const borrowedSection = document.createElement('div');
             borrowedSection.innerHTML = '<h3>All Borrowed Books</h3>';
-        // Loop through all users and list out borrowed books
+            let hasBorrowed = false;
             users.forEach(user => {
                 if (user.borrowedBooks && user.borrowedBooks.length > 0) {
                     user.borrowedBooks.forEach(bookId => {
                         const book = books.find(b => b.id === bookId);
                         if (book) {
+                            hasBorrowed = true;
                             const div = document.createElement('div');
                             div.className = 'book-item';
-                            div.textContent = `${book.title} borrowed by ${user.username}`;
-                            const returnButton = document.createElement('button');
-                            returnButton.textContent = 'Return';
-                            returnButton.addEventListener('click', () => returnBook(book.id, user.username));
-                            div.appendChild(returnButton);
+                            div.innerHTML = `${book.title} borrowed by ${user.username} 
+                                <button onclick="returnBook(${book.id}, '${user.username}')">Return</button>`;
                             borrowedSection.appendChild(div);
                         }
                     });
                 }
             });
-            manageList.appendChild(borrowedSection);
+            if (hasBorrowed) manageList.appendChild(borrowedSection);
         }
     }
 }
 
-// New function to handle book borrowing (Issue-books)
+// New function to handle book borrowing
 function borrowBook(bookId) {
-    if (!currentUser) return;
+    if (!currentUser) {
+        alert('Please log in to borrow books.');
+        return;
+    }
     
     const book = books.find(b => b.id === bookId);
     if (book && book.quantity > 0) {
@@ -335,13 +357,12 @@ function borrowBook(bookId) {
 
 // New function to handle book returning
 function returnBook(bookId, username) {
-    // Only admins are authorized to return books to library catalog
-    if (!currentUser || !currentUser.isAdmin) return;
+    const user = currentUser && currentUser.username === username ? currentUser : users.find(u => u.username === username);
+    if (!user || !user.borrowedBooks) return;
     
     const book = books.find(b => b.id === bookId);
-    const user = users.find(u => u.username === username);
     
-    if (book && user && user.borrowedBooks) {
+    if (book) {
         const bookIndex = user.borrowedBooks.indexOf(bookId);
         if (bookIndex > -1) {
             user.borrowedBooks.splice(bookIndex, 1);
@@ -350,11 +371,12 @@ function returnBook(bookId, username) {
             // Update storage
             localStorage.setItem('books', JSON.stringify(books));
             localStorage.setItem('users', JSON.stringify(users));
-            if (currentUser.username === username) {
+            if (currentUser && currentUser.username === username) {
                 localStorage.setItem('currentUser', JSON.stringify(currentUser));
             }
+            
             displayBooks();
-            displayManageBooks();
+            if (currentUser && currentUser.isAdmin) displayManageBooks();
             alert('Book returned successfully!');
         }
     }
@@ -364,8 +386,18 @@ function returnBook(bookId, username) {
 function deleteBook(id) {
     if (!currentUser || !currentUser.isAdmin) return;
     books = books.filter(book => book.id !== id);
-    books = books.filter(book => book.id !== id);
+    users.forEach(user => {
+        if (user.borrowedBooks) {
+            user.borrowedBooks = user.borrowedBooks.filter(bookId => bookId !== id);
+        }
+    });
+
+    if (currentUser && currentUser.borrowedBooks) {
+        currentUser.borrowedBooks = currentUser.borrowedBooks.filter(bookId => bookId !== id);
+    }
     localStorage.setItem('books', JSON.stringify(books));
+    localStorage.setItem('users', JSON.stringify(users));
+    if (currentUser) localStorage.setItem('currentUser', JSON.stringify(currentUser));
     displayBooks();
     displayManageBooks();
 }
@@ -378,3 +410,9 @@ if (searchInput) {
         displayBooks();
     }, 300));
 }
+
+
+
+
+
+

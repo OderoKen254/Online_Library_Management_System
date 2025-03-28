@@ -1,12 +1,13 @@
 // Create element references
-
 const Books_Library_API = 'https://openlibrary.org/search.json';
 
 let users = JSON.parse(localStorage.getItem('users')) || [];
 let books = JSON.parse(localStorage.getItem('books')) || [];
-let currentUser = null; // we use let because it will be reassigned later to other users
 
-//Debounce function to limit API calls
+// Change from const to let so we can reassign later.
+let currentUser = null; 
+
+// Debounce function to limit API calls
 function debounce(func, wait) {
     let timeout;
     return function (...args) {
@@ -23,22 +24,20 @@ function isValidEmail(email) {
 // Password strength validation function
 function isStrongPassword(password) {
     const minLength = 8;
-    const maxLength =12;
     const hasUpperCase = /[A-Z]/.test(password);
     const hasLowerCase = /[a-z]/.test(password);
     const hasNumbers = /\d/.test(password);
     const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(password);
-    return password.length >= minLength && maxLength && hasUpperCase && hasLowerCase && 
-           hasNumbers && hasSpecial;
+    return password.length >= minLength && hasUpperCase && hasLowerCase && hasNumbers && hasSpecial;
 }
 
 // Event listener to initialize the app
-
 document.addEventListener('DOMContentLoaded', () => {
     const loggedInUser = localStorage.getItem('currentUser');
     if (loggedInUser) {
         currentUser = JSON.parse(loggedInUser);
         updateUserInterface();
+        // Set catalog tab as default when a user is logged in
         document.querySelector('.tab-btn[data-tab="catalog"]').click();
     } else {
         document.querySelector('.tab-btn[data-tab="register"]').click();
@@ -84,8 +83,8 @@ if (regForm) {
         }
 
         if (!isStrongPassword(password)) {
-            document.getElementById('register-message').textContent = 
-                'Password must have 8-12 characters of uppercase, lowercase, numbers, and special characters.';
+            document.getElementById('register-message').textContent =
+                'Password must include at least 8 characters with uppercase, lowercase, numbers, and special characters.';
             return;
         }
 
@@ -98,14 +97,14 @@ if (regForm) {
         users.push(userData);
         localStorage.setItem('users', JSON.stringify(users));
 
-        const mockJsonData = JSON.stringify(userData);
-        localStorage.setItem('mockUserJson', mockJsonData); // Mock JSON storage
+        // Mock JSON storage (optional)
+        localStorage.setItem('mockUserJson', JSON.stringify(userData));
 
         document.getElementById('register-message').textContent = 'Registration successful!';
         displayUsers();
         e.target.reset();
 
-    // Switch to login tab after registration
+        // Immediately switch to login tab after registration
         setTimeout(() => {
             document.querySelector('.tab-btn[data-tab="login"]').click();
             document.getElementById('register-message').textContent = ''; // Clear message
@@ -138,12 +137,12 @@ if (loginForm) {
                 document.querySelector('.tab-btn[data-tab="catalog"]').click();
                 document.getElementById('login-message').textContent = '';
                 displayBooks();
-            },1000); //Delay to show success message
+            }, 1000); // Delay to show success message
         } else {
             document.getElementById('login-message').textContent = 'Invalid credentials!';
         }
     });
-} 
+}
 
 // Event listener for user logging out
 const logoutBtn = document.getElementById('logout-btn');
@@ -158,7 +157,7 @@ if (logoutBtn) {
     });
 }
 
-// func helper to update UI based on current user status
+// Helper function to update UI based on current user status
 function updateUserInterface() {
     const userInfo = document.getElementById('logged-in-user');
     const logoutBtn = document.getElementById('logout-btn');
@@ -170,12 +169,13 @@ function updateUserInterface() {
     }
 }
 
-// func to display registered users
+// Function to display registered users
 function displayUsers() {
     const userList = document.getElementById('user-list');
     if (userList) {
         userList.innerHTML = '';
-        users.forEach(user => {
+        const recentUsers = users.slice(-3);
+        recentUsers.forEach(user => {
             const li = document.createElement('li');
             li.textContent = `${user.username} (${user.isAdmin ? 'Admin' : 'User'})`;
             userList.appendChild(li);
@@ -183,27 +183,28 @@ function displayUsers() {
     }
 }
 
-// Async function for displaying books in catalog fetched from API source
+// Async function for displaying books in catalog (fetched from API source & local storage)
 async function displayBooks() {
     const bookList = document.getElementById('book-list');
     if (!bookList) return;
-    bookList.innerHTML = '<p>Loading available books...</p>';
+    bookList.innerHTML = '<p>Loading books...</p>';
     const searchTerm = document.getElementById('search-input')?.value.trim() || 'fiction';
-    
-    // Setting a default library search (i.e., defaulted the search to fiction books)
+
+    // Setting a default search term ("fiction") if none provided.
     try {
         const apiUrl = `${Books_Library_API}?q=${encodeURIComponent(searchTerm)}`;
         const response = await fetch(apiUrl);
+        // Use backticks for template literal in error message.
         if (!response.ok) throw new Error(`API request failed: ${response.status}`);
         const data = await response.json();
 
-        bookList.innerHTML = ''; // Clear loading message
+        bookList.innerHTML = ""; // Clear loading message
 
-        const booksToDisplay = data.docs.slice(0, 15); // Limit to first 15 API results
+        const booksToDisplay = data.docs.slice(0, 10);
         if (booksToDisplay.length === 0) {
-            bookList.innerHTML = '<p>No available books found.</p>';
+            bookList.innerHTML = '<p>No books found.</p>';
         } else {
-            booksToDisplay.forEach(book => {
+            booksToDisplay.forEach((book) => {
                 const title = book.title || 'Unknown Title';
                 const author = book.author_name ? book.author_name[0] : 'Unknown Author';
                 const div = document.createElement('div');
@@ -213,7 +214,7 @@ async function displayBooks() {
             });
         }
 
-        // Add locally managed books by admin
+        // Add locally managed books added by admin
         books.forEach(book => {
             const div = document.createElement('div');
             div.className = 'book-item';
@@ -228,9 +229,9 @@ async function displayBooks() {
         bookList.innerHTML = `<p>Error loading books. Please try again.</p>`;
         console.error('Error fetching books:', error);
     }
-}   
+}
 
-// Event listener to submit local books- adding books stored locally by Admin
+// Event listener to submit local books (adding books stored locally by Admin)
 const addBookForm = document.getElementById('add-book-form');
 if (addBookForm) {
     addBookForm.addEventListener('submit', (e) => {
@@ -239,7 +240,7 @@ if (addBookForm) {
             alert('Only admins can add books.');
             return;
         }
-
+        
         const title = document.getElementById('book-title')?.value.trim();
         const author = document.getElementById('book-author')?.value.trim();
         const quantity = parseInt(document.getElementById('book-quantity')?.value);
@@ -258,14 +259,14 @@ if (addBookForm) {
     });
 }
 
-// fnc to display managed books to admin panel only from books local storage
+// Function to display managed books in the admin panel (from local storage)
 function displayManageBooks() {
     const manageList = document.getElementById('manage-book-list');
     if (!manageList) {
         console.error('manage-book-list element not found');
         return;
     }
-    manageList.innerHTML = " ";
+    manageList.innerHTML = "";
 
     if (books.length === 0) {
         manageList.innerHTML = '<p>No local books added yet.</p>';
@@ -283,11 +284,11 @@ function displayManageBooks() {
             manageList.appendChild(div);
         });
 
-        // Display borrowed books with return option
+        // Display borrowed books with a return option (admins only)
         if (currentUser && currentUser.isAdmin) {
             const borrowedSection = document.createElement('div');
-            borrowedSection.innerHTML = '<h3>All Borrowed Books</h3>';
-        // Loop through all users and list out borrowed books
+            borrowedSection.innerHTML = '<h3>Borrowed Books</h3>';
+            // Loop through all users and list out borrowed books
             users.forEach(user => {
                 if (user.borrowedBooks && user.borrowedBooks.length > 0) {
                     user.borrowedBooks.forEach(bookId => {
@@ -310,7 +311,7 @@ function displayManageBooks() {
     }
 }
 
-// New function to handle book borrowing (Issue-books)
+// New function to handle book borrowing (issue)
 function borrowBook(bookId) {
     if (!currentUser) return;
     
@@ -328,14 +329,12 @@ function borrowBook(bookId) {
         displayBooks();
         if (currentUser.isAdmin) displayManageBooks();
         alert('Book borrowed successfully!');
-    } else {
-        alert('Book is not available to borrow.');
     }
 }
 
 // New function to handle book returning
 function returnBook(bookId, username) {
-    // Only admins are authorized to return books to library catalog
+    // Only admins can return books in your current functionality
     if (!currentUser || !currentUser.isAdmin) return;
     
     const book = books.find(b => b.id === bookId);
@@ -353,6 +352,7 @@ function returnBook(bookId, username) {
             if (currentUser.username === username) {
                 localStorage.setItem('currentUser', JSON.stringify(currentUser));
             }
+            
             displayBooks();
             displayManageBooks();
             alert('Book returned successfully!');
@@ -360,17 +360,16 @@ function returnBook(bookId, username) {
     }
 }
 
-// fnc to delete local storage books 
+// Function to delete a local book (admin only)
 function deleteBook(id) {
     if (!currentUser || !currentUser.isAdmin) return;
-    books = books.filter(book => book.id !== id);
     books = books.filter(book => book.id !== id);
     localStorage.setItem('books', JSON.stringify(books));
     displayBooks();
     displayManageBooks();
 }
 
-// search functionality input
+// Search functionality for books with debounce to limit API calls
 const searchInput = document.getElementById('search-input');
 if (searchInput) {
     searchInput.addEventListener('input', debounce(() => {
