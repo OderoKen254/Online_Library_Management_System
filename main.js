@@ -175,7 +175,8 @@ function displayUsers() {
     const userList = document.getElementById('user-list');
     if (userList) {
         userList.innerHTML = '';
-        users.forEach(user => {
+        const recentUsers = users.slice(-3);
+        recentUsers.forEach(user => {
             const li = document.createElement('li');
             li.textContent = `${user.username} (${user.isAdmin ? 'Admin' : 'User'})`;
             userList.appendChild(li);
